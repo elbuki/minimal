@@ -1,41 +1,43 @@
+/*Todo:
+ * Process env on port
+ * HTTP verbs
+ * Database integration
+ * CORS
+ * Middleware
+ * Error handlers
+ */
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/elbuki/minimal/router"
 )
 
-// Handler from HTTP requests signature
-type Handler func(w http.ResponseWriter, r *http.Request)
-
-// Route struct for HTTP handlers
-type Route struct {
-	URI     string
-	handler func() string
+// Post struct that is used as a mock
+type Post struct {
+	ID    uint
+	Title string
+	Body  string
 }
 
-func homeHandler() string {
-	return "{\"asdf\": 5}"
-}
-
-func common(handler func() string) Handler {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, handler())
+func homeHandler() interface{} {
+	post := Post{
+		ID:    1,
+		Title: "Post title",
+		Body:  "Post message that describes the post",
 	}
+
+	return post
 }
 
 func main() {
-	var routes = []Route{
-		Route{URI: "home", handler: homeHandler},
+	routes := []router.Route{
+		router.Route{URI: "", Handler: homeHandler},
 	}
 
-	for _, route := range routes {
-		uri := fmt.Sprintf("/%s", route.URI)
-
-		http.HandleFunc(uri, common(route.handler))
-	}
+	router.Register(routes)
 
 	log.Println("Server started at port 3000")
 	http.ListenAndServe(":3000", nil)
