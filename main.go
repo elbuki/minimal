@@ -1,18 +1,14 @@
 /*Todo:
- * Process env on port
- * HTTP verbs
- * Database integration
  * CORS
  * Middleware
  * Error handlers
+ * Logging
  */
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/elbuki/minimal/router"
+	"github.com/elbuki/minimal/server"
 )
 
 // Post struct that is used as a mock
@@ -32,13 +28,24 @@ func homeHandler() interface{} {
 	return post
 }
 
-func main() {
-	routes := []router.Route{
-		router.Route{URI: "", Handler: homeHandler},
+func addPost() interface{} {
+	post := Post{
+		ID:    2,
+		Title: "New post title",
+		Body:  "Post message that describes the post",
 	}
 
-	router.Register(routes)
+	return post
+}
 
-	log.Println("Server started at port 3000")
-	http.ListenAndServe(":3000", nil)
+func main() {
+	routes := []router.Route{
+		router.Route{URI: "posts", Action: "GET", Handler: homeHandler},
+		router.Route{URI: "posts/create", Action: "POST", Handler: addPost},
+	}
+
+	router.Register(routes...)
+
+	// Could get from environment variables
+	server.Start(8080)
 }
