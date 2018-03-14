@@ -1,4 +1,5 @@
 /*Todo:
+ * Status codes
  * CORS
  * Middleware
  * Error handlers
