@@ -1,4 +1,4 @@
-package response
+package minimal
 
 import (
 	"net/http"

@@ -1,13 +1,13 @@
 /*Todo:
- * Middleware
  * Error handlers
  * Logging
  */
 package main
 
 import (
-	"github.com/elbuki/minimal/router"
-	"github.com/elbuki/minimal/server"
+	"fmt"
+
+	"github.com/elbuki/minimal/minimal"
 )
 
 // Post struct that is used as a mock
@@ -37,14 +37,30 @@ func addPost() interface{} {
 	return post
 }
 
+func userExists() (interface{}, bool, int) {
+	fmt.Println("userExists")
+	return nil, true, 200
+}
+
+func isLoggedIn() (interface{}, bool, int) {
+	fmt.Println("isLoggedIn")
+	return "{}", false, 401
+}
+
 func main() {
-	routes := []router.Route{
-		router.Route{URI: "posts", Action: "GET", Handler: homeHandler},
-		router.Route{URI: "posts/create", Action: "POST", Handler: addPost},
+	common := []func() (interface{}, bool, int){isLoggedIn, userExists}
+	routes := []minimal.Route{
+		minimal.Route{
+			URI:     "posts",
+			Action:  "GET",
+			Handler: homeHandler,
+			Before:  common,
+		},
+		minimal.Route{URI: "posts/create", Action: "POST", Handler: addPost},
 	}
 
-	router.Register(routes...)
+	minimal.Register(routes...)
 
 	// Could get from environment variables
-	server.Start(8080)
+	minimal.Start(8080)
 }
