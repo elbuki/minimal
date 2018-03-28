@@ -1,7 +1,3 @@
-/*Todo:
- * Error handlers
- * Logging
- */
 package main
 
 import (
